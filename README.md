@@ -1,30 +1,48 @@
-# Distributed version of the Spring PetClinic Sample Application built with Spring Cloud 
+# Kubernetes version of the Spring PetClinic Sample Application
 
-[![Build Status](https://travis-ci.org/spring-petclinic/spring-petclinic-microservices.svg?branch=master)](https://travis-ci.org/spring-petclinic/spring-petclinic-microservices/) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-This microservices branch was initially derived from [AngularJS version](https://github.com/spring-petclinic/spring-petclinic-angular1) to demonstrate how to split sample Spring application into [microservices](http://www.martinfowler.com/articles/microservices.html).
-To achieve that goal we use Spring Cloud Gateway, Spring Cloud Circuit Breaker, Spring Cloud Config, Spring Cloud Sleuth, Resilience4j, Micrometer 
-and the Eureka Service Discovery from the [Spring Cloud Netflix](https://github.com/spring-cloud/spring-cloud-netflix) technology stack.
+This microservices branch was initially derived from [AngularJS version](https://github.com/spring-petclinic/spring-petclinic-angular1) to demonstrate how to split sample Spring application into [microservices](http://www.martinfowler.com/articles/microservices.html). From this point, a new branch with a Kubernetes-native approach was created.
+To achieve that goal we use Spring Cloud Gateway, Spring Cloud Circuit Breaker, Spring Cloud Sleuth, Resilience4j, and Micrometer. The Spring Cloud Netflix stack is not used, since Kubernetes provides native service load-balancing and service discovery.
 
-## Starting services locally without Docker
+## Starting services locally
 
-Every microservice is a Spring Boot application and can be started locally using IDE ([Lombok](https://projectlombok.org/) plugin has to be set up) or `../mvnw spring-boot:run` command. Please note that supporting services (Config and Discovery Server) must be started before any other application (Customers, Vets, Visits and API).
+Every microservice is a Spring Boot application and can be started locally using IDE ([Lombok](https://projectlombok.org/) plugin has to be set up) or `../mvnw spring-boot:run` command.
 Startup of Tracing server, Admin server, Grafana and Prometheus is optional.
 If everything goes well, you can access the following services at given location:
-* Discovery Server - http://localhost:8761
-* Config Server - http://localhost:8888
 * AngularJS frontend (API Gateway) - http://localhost:8080
-* Customers, Vets and Visits Services - random port, check Eureka Dashboard 
-* Tracing Server (Zipkin) - http://localhost:9411/zipkin/ (we use [openzipkin](https://github.com/openzipkin/zipkin/tree/master/zipkin-server))
-* Admin Server (Spring Boot Admin) - http://localhost:9090
-* Grafana Dashboards - http://localhost:3000
-* Prometheus - http://localhost:9091
+* Customers - http://localhost:8081
+* Vets - http://localhost:8082
+* Visits - http://localhost:8083
 
-You can tell Config Server to use your local Git repository by using `native` Spring profile and setting
-`GIT_REPO` environment variable, for example:
-`-Dspring.profiles.active=native -DGIT_REPO=/projects/spring-petclinic-microservices-config`
+## Starting services locally with Kind
+Pre-built images are available, so that you can start deploying this app to your favorite Kubernetes cluster. In case you'd like to build your own images, please follow these instructions.
 
-## Starting services locally with docker-compose
+### Building container images with pack
+Please note there's no `Dockerfile` available in this project: all microservices
+leverage [Cloud-native Buildpacks](https://buildpacks.io) to build optimized and secured container images.
+
+There many ways of using Cloud-native Buildpacks: the easiest way is to use the `pack` CLI.
+
+[Follow these instructions](https://buildpacks.io/docs/install-pack/) to deploy the `pack` CLI to your workstation.
+
+Many buildpack implementations are available: for best results, use [Paketo buildpacks](https://paketo.io):
+
+```bash
+$ pack set-default-builder gcr.io/paketo-buildpacks/builder:base
+```
+
+You're ready to build container images with no Dockerfile!
+
+Use the provided `Makefile` to build container images:
+
+```bash
+$ make all DOCKER_PREFIX=myrepo
+```
+
+
+
+
 In order to start entire infrastructure using Docker, you have to build images by executing `./mvnw clean install -P buildDocker` 
 from a project root. Once images are ready, you can start them with a single command
 `docker-compose up`. Containers startup order is coordinated with [`dockerize` script](https://github.com/jwilder/dockerize). 

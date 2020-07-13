@@ -1,0 +1,37 @@
+server:
+  port: 8082
+
+wavefront:
+  application:
+    name: petclinic
+
+management:
+  health:
+    probes:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
+  metrics:
+    export:
+      wavefront:
+        enabled: false
+
+spring:
+  datasource:
+    initialization-mode: always
+    schema: classpath*:db/hsqldb/schema.sql
+    data: classpath*:db/hsqldb/data.sql
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+  zipkin:
+    enabled: false
+---
+spring:
+  profiles: mysql
+  datasource:
+    schema: classpath*:db/mysql/schema.sql
+    data: classpath*:db/mysql/data.sql

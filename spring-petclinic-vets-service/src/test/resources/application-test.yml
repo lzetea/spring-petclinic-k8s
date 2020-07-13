@@ -1,9 +1,10 @@
-spring.jpa.hibernate.ddl-auto: none
-
 spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
   datasource:
-    schema: classpath*:db/hsqldb/schema.sql
-    data: classpath*:db/hsqldb/data.sql
+    schema: classpath*:schema-hsqldb.sql
+    data: classpath*:data-hsqldb.sql
 
 vets:
   cache:
