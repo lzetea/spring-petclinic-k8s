@@ -44,6 +44,12 @@ public interface PetRepository extends JpaRepository<Pet, Integer> {
     @Query("FROM PetType ptype WHERE ptype.id = :typeId")
     Optional<PetType> findPetTypeById(@Param("typeId") int typeId);
 
+    /**
+     * Get number of pets for a given pet type.
+     * @return number of pets.
+     */
+    @Query("SELECT COUNT(p.id) FROM Pet p WHERE p.type = :type")
+    Number countPetsByType (PetType type);
 
 }
 
