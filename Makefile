@@ -1,4 +1,4 @@
-DOCKER_PREFIX = alexandreroman
+DOCKER_PREFIX = harbor.mytanzu.xyz/lze-dev
 
 all: api-gateway customers vets visits
 
